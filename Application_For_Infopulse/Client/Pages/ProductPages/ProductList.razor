@@ -1,0 +1,95 @@
+﻿@page "/product"
+@inject ProductService _productService
+
+
+<div class="row mt-4 mb-3">
+    <div class="col">
+        <ActionTitle ActionString='@("Products")' />
+    </div>
+    <div class="col text-right">
+        <a class="btn btn-secondary" href="newProduct">New Product</a>
+    </div>
+</div>
+
+<div class="secondborder">
+    <table class="table-bordered pb-5" width="100%">
+        <thead>
+            <tr style="background-color:blue; color:white">
+                <th class="text-center">Product Id</th>
+                <th class="text-center">Product Name</th>
+                <th class="text-center">Product Category</th>
+                <th class="text-center">Product Size</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-center">Price</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (products is null)
+            {
+                <tr>
+                    <td>Products are loading...</td>
+                </tr>
+            }
+            else if (products.Count == 0)
+            {
+                <tr>
+                    <td>Table is empty</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in products)
+                {
+                    <tr>
+                        <td class="text-center">@item.ProductId</td>
+                        <td class="text-center">@item.Name</td>
+                        <td class="text-center">@item.Category</td>
+                        <td class="text-center">@item.ProductSize</td>
+                        <td class="text-center">@item.Quantity</td>
+                        <td class="text-center">$@item.Price.ToString("0.00")</td>
+                        <td class="text-center">
+                        <a href="#" 
+                           @onclick:preventDefault 
+                           @onclick="()=> {
+                                         isDeleteModalOpen = true;
+                                         deletedProductId = item.ProductId;
+                                     }">
+                            Delete
+                        </a></td>
+                    </tr>                   
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<MatDialog IsOpen="isDeleteModalOpen">
+    <MatDialogTitle>Are you sure you want to delete this item?</MatDialogTitle>
+    <MatDialogActions>
+        <MatButton @onclick="DeleteProductAsync">Yes</MatButton>
+        <MatButton @onclick="()=>isDeleteModalOpen = false">No</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+@code {
+
+    private List<Product> products;
+    bool isDeleteModalOpen = false;
+    long deletedProductId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        products = await _productService.GetAllAsync();
+    }
+
+    private async Task DeleteProductAsync()
+    {
+        products = null;
+        await _productService.DeleteProductAsync(deletedProductId);
+        isDeleteModalOpen = false;
+        products = await _productService.GetAllAsync();
+    }
+
+
+}

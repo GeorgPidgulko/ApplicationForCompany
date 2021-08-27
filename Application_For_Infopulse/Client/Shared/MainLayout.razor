@@ -1,0 +1,41 @@
+﻿@inherits LayoutComponentBase
+
+<div class="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <MainTitle />
+            </div>
+        </div>
+        <div class="container">
+            <div class="row ">
+                <div class="col nav">
+                    <div>
+                        <NavLink class="nav-item" href="order">
+                            <button type="button" class="btn btn-outline-secondary btn-lg nav-item px-5">Orders</button>
+                        </NavLink>
+                    </div>
+                    <div class="ml-4">
+                        <NavLink class="nav-item active" href="product">
+                            <button type="button" class="btn btn-secondary btn-lg px-5">Products</button>
+                        </NavLink>
+                    </div>
+                    <div class="ml-4">
+                        <NavLink class="nav-item" href="customer">
+                            <button type="button" class="btn btn-secondary btn-lg px-5">Customers</button>
+                        </NavLink>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="mainborder">
+                @Body
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

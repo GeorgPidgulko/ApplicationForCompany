@@ -1,0 +1,52 @@
+﻿body {
+   
+}
+
+
+/*.table_block {
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border: 1px solid #000;
+    display: block;
+}*/
+
+/*.table_block {
+    color:greenyellow;
+    border-radius: 10px;
+    border: 1px solid #000;
+    display: block;
+}*/
+
+TABLE {
+    width: 100%; /* Ширина таблицы */
+    border-collapse: collapse; /* Убираем двойные линии между ячейками */
+}
+TD, TH {
+    padding: 3px; /* Поля вокруг содержимого таблицы */
+    border: 1px solid black; /* Параметры рамки */
+}
+TH {
+    background-color:blue;
+    color:white;
+}
+.mainborder {
+    border: 3px solid #808080;
+    padding: 5px 30px 30px 30px;
+    border-radius: 10px;
+    margin-top: 10px;
+    width: 100%;
+    min-height: 540px;
+    /*    min-height:500px;
+    max-height:520px;*/
+    /*  height:540px;*/
+}
+.secondborder {
+    border: 3px solid #808080;
+    /*    padding: 5px 30px 30px 30px;*/
+    border-radius: 10px;
+/*    min-height: 470px;
+    max-height: 490px;*/
+    height:420px;
+}

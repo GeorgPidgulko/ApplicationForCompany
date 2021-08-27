@@ -1,0 +1,91 @@
+﻿@page "/"
+@page "/order"
+@inject OrderService _orderService
+@inject NavigationManager navManager
+
+
+
+
+<div class="row mt-4 mb-3">
+    <div class="col">
+        <ActionTitle ActionString='@("Order")'/>
+    </div>
+    <div class="col text-right">
+        <button class="btn btn-secondary" @onclick="GoToNewOrderPage">New Order</button>
+    </div>
+</div>
+<div class="secondborder">
+    <table class="pb-5 table-bordered" width="100%">
+        @*table_block*@
+        <thead>
+            <tr>               
+                <th class="text-center">Order Number</th>
+                <th class="text-center">Customer Name</th>
+                <th class="text-center">Customer Address</th>
+                <th class="text-center">Total Cost</th>
+                <th class="text-center">Status</th>
+            </tr>
+            @*style="background-color:blue; color:white"*@
+        </thead>
+        <tbody>
+            @if (orders is null)
+            {
+                <tr>
+                    <td>Orders are loading...</td>
+                </tr>
+            }
+            else if (orders.Count == 0)
+            {
+                <tr>
+                    <td>Table is empty</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in orders)
+                {
+                    <tr>                        
+                        <td class="text-center"><a href="/order/editorder/@item.OrderId">@item.OrderId</a></td>
+                        <td class="text-center">@item.Customer.Name</td>
+                        <td class="text-center">@item.Customer.Address</td>
+                        <td class="text-center">@item.TotalCost</td>
+                        <td class="text-center">@item.Status</td>
+                    </tr>
+                    @*style = "border:1px solid black; border-radius:3px"*@
+                }
+            }
+
+
+        </tbody>
+    </table>
+</div>
+
+
+
+    @code {
+        private List<Order> orders;
+
+        //[Parameter]
+        //public RenderFragment ActionTitle { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+
+            orders = await _orderService.GetAllAsync();
+        }
+
+        void GoToNewOrderPage()
+        {
+            //int orderNumber;
+            //if (orders is null)
+            //{
+            //    orderNumber = 1;
+            //}
+            //else
+            //{
+            //    orderNumber = orders.Max(a => a.OrderNumber) + 1;
+            //}
+
+            navManager.NavigateTo($"order/neworder/");
+        }
+    }

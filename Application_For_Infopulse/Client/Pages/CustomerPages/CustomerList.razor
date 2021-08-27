@@ -1,0 +1,67 @@
+﻿@page "/customer"
+@inject CustomerService _customerService
+
+
+<div class="row mt-4 mb-3">
+    <div class="col">
+        <ActionTitle ActionString='@("Customers")' />
+    </div>
+    <div class="col text-right">
+        <a class="btn btn-secondary" href="NewCustomer">New Customer</a>
+    </div>
+</div>
+
+<div class="secondborder">
+    <table class="table-bordered pb-5" width="100%">
+        <thead>
+            <tr style="background-color:blue; color:white">               
+                <th class="text-center">Customer Name</th>
+                <th class="text-center">Customer Address</th>               
+                <th class="text-center">Total Order Cost</th>
+                <th class="text-center">Orders Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (customers is null)
+            {
+                <tr>
+                    <td>Customers are loading...</td>
+                </tr>
+            }
+            else if (customers.Count == 0)
+            {
+                <tr>
+                    <td>Table is empty</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in customers)
+                {
+                    <tr>
+                       
+                        <td class="text-center">@item.Name</td>
+                        <td class="text-center">@item.Address</td>                        
+                        <td class="text-center">$@item.TotalOrderCost.ToString("0.00")</td>
+                        <td class="text-center">@item.OrdersCount</td>                      
+                    </tr>
+
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+
+@code {
+
+    private List<Customer> customers;
+    bool isDeleteModalOpen = false;
+    long deletedProductId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await _customerService.GetAllAsync();
+    }   
+
+}

@@ -1,0 +1,103 @@
+﻿@page "/newProduct"
+@inject ProductService _productService
+@inject NavigationManager _navManager
+
+<ActionTitle ActionString='@("New Product")' />
+
+<div class="row">       
+    <div class="col-4">
+        <span style="font-size:13px; font-weight:bold">Created Date:</span>
+    </div>
+    <div class="col-8">
+        <div style="font-size:13px; font-weight:bold">@product.CreatedDate.ToString("dd/MM/yyyy")</div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-4">
+        <div style="font-size:13px; font-weight:bold">Product Name:</div>
+    </div>
+    <div class="col-8">
+        <input type="text" @bind-value="product.Name" />
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-4">
+        <div style="font-size:13px; font-weight:bold">Product Category:</div>
+    </div>
+    <div class="col-8">
+        <MatSelectItem @bind-Value="product.Category" Items="@GetProductCategories()"></MatSelectItem>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-4">
+        <div style="font-size:13px; font-weight:bold">Product Size:</div>
+    </div>
+    <div class="col-8">
+        <MatSelectItem @bind-Value="product.ProductSize" Items="@GetProductSizes()"></MatSelectItem>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-4">
+        <div style="font-size:13px; font-weight:bold">Available Quantity:</div>
+    </div>
+    <div class="col-8">
+        <input type="text" @bind-value="product.Quantity" />
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-4">
+        <div style="font-size:13px; font-weight:bold">Price:</div>
+    </div>
+    <div class="col-8">
+        <input type="text" @bind-value="product.Price" />
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-4">
+        <div style="font-size:13px; font-weight:bold">Description:</div>
+    </div>
+    <div class="col-8">
+        <textarea @bind="product.Description">
+
+       </textarea>
+    </div>
+</div>
+<div class="row mt-4 mb-3">
+    <div class="col text-right text-danger">
+        @errorMessage
+    </div>
+    <div class="col text-right">
+        <button class="btn btn-secondary" @onclick="CreateProductAsync">Save</button>
+        <a class="btn btn-secondary" href="/product">Cancel</a>
+    </div>
+</div>
+
+@code {
+    Product product = new Product();
+    string errorMessage;
+
+    protected override void OnInitialized()
+    {
+        product.CreatedDate = DateTime.Now;
+
+    }
+
+    public ProductCategory[] GetProductCategories()
+    {
+        return Enum.GetValues(typeof(ProductCategory)).Cast<ProductCategory>().ToArray();
+    }
+
+    private Size[] GetProductSizes()
+    {
+        return Enum.GetValues(typeof(Size)).Cast<Size>().ToArray();
+    }
+
+    public async Task CreateProductAsync()
+    {
+        errorMessage = "";
+        if (await _productService.CreateProductAsync(product))
+            _navManager.NavigateTo("product");
+        else
+            errorMessage = "Product not created. Please try againe";
+    }
+}

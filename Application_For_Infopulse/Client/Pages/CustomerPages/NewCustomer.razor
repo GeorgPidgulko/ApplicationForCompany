@@ -1,0 +1,62 @@
+﻿@page "/NewCustomer"
+@inject CustomerService _customerService
+@inject NavigationManager _navManager
+
+<ActionTitle ActionString='@("New Customer")' />
+
+<div class="row">
+    <div class="col-2">
+        <span style="font-size:13px; font-weight:bold">Created Date:</span>
+    </div>
+    <div class="col-1">
+        <div style="font-size:13px; font-weight:bold">@customer.CreateDate.ToString("dd/MM/yyyy")</div>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-2">
+        <div style="font-size:13px; font-weight:bold">Customer Name:</div>
+    </div>
+    <div class="col-1">
+        <input type="text" @bind-value="customer.Name" />
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-2">
+        <div style="font-size:13px; font-weight:bold">Address:</div>
+    </div>
+    <div class="col-1">
+        <textarea @bind="customer.Address">
+
+       </textarea>
+    </div>
+</div>
+<div class="row mt-4 mb-3">
+    <div class="col text-right text-danger">
+        @errorMessage
+    </div>
+    <div class="col text-right">
+        <button class="btn btn-secondary" @onclick="CreateCustomerAsync">Save</button>
+        <a class="btn btn-secondary" href="/customer">Cancel</a>
+    </div>
+</div>
+
+@code {
+    Customer customer = new Customer();
+    string errorMessage;
+
+    protected override void OnInitialized()
+    {
+        customer.CreateDate = DateTime.Now;
+
+    }
+
+
+    public async Task CreateCustomerAsync()
+    {
+        errorMessage = "";
+        if (await _customerService.CreateCustomerAsync(customer))
+            _navManager.NavigateTo("customer");
+        else
+            errorMessage = "Customer not created. Please try againe";
+    }
+}

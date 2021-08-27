@@ -1,0 +1,286 @@
+﻿@page "/order/neworder"
+@inject NavigationManager _navManager
+@inject CustomerService _customerService
+@inject OrderService _orderService
+@inject ProductService _productService
+
+
+
+<ActionTitle ActionString='@("New Order")' />
+@if (customers is null)
+{
+    <div class="row">
+        Loading, please wait...
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-2">
+            <span style="font-size:13px; font-weight:bold">Order Date:</span>
+        </div>
+        <div class="col-1">
+            <div style="font-size:13px; font-weight:bold">@order.DateOfOrder.ToString("dd/MM/yyyy")</div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-2">
+            <div style="font-size:13px; font-weight:bold">Customer:</div>
+        </div>
+        <div class="col-1">
+            <MatSelectItem @bind-Value="order.Customer" Items="@customers">
+                <ItemTemplate>
+                    <span>@context?.Name</span>
+                </ItemTemplate>
+            </MatSelectItem>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-2">
+            <div style="font-size:13px; font-weight:bold">Status:</div>
+        </div>
+        <div class="col-1">
+            <MatSelectItem @bind-Value="order.Status" Items="@GetOrderStatuses()"></MatSelectItem>
+        </div>
+    </div>
+}
+
+<div class="row mt-4">
+    <div class="col-2">
+        <div style="font-size:13px; font-weight:bold">Total Cost:</div>
+    </div>
+    <div class="col-1">
+        <div style="font-size:13px; font-weight:bold">@order.TotalCost</div>
+    </div>
+</div>
+
+<div class="row mt-4 mb-3">
+    <div class="col">
+        <h6 style="font-weight:bold; color:black"><em>Add Products:</em></h6>
+    </div>
+    <div class="col text-right">
+        <button class="btn btn-secondary" @onclick="SelectProduct">Add Products To Order</button>
+    </div>
+</div>
+<div class="secondborder">
+
+    <table class="table-bordered pb-5" width="100%">
+        <thead>
+            <tr>
+                <th class="text-center" style="border-radius:3px">Product Id</th>
+                <th class="text-center" style="border-radius:3px">Product Name</th>
+                <th class="text-center" style="border-radius:3px">Product Catogory</th>
+                <th class="text-center" style="border-radius:3px">Produst Size</th>
+                <th class="text-center" style="border-radius:3px">Quantity</th>
+                <th class="text-center" style="border-radius:3px">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var productInOrder in order.ProductsInOrder)
+            {
+                <tr>
+                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.ProductId</td>
+                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.Name</td>
+                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.Category</td>
+                    <td class="text-center" style="border-radius:3px">@productInOrder.Product.ProductSize</td>
+                    <td class="text-center" style="border-radius:3px">@productInOrder.Quantity</td>
+                    <td class="text-center" style="border-radius:3px">@productInOrder.ProductPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="row mt-4 mb-3">
+    <div class="col text-right text-danger">
+        @errorMessage
+    </div>
+    <div class="col text-right">
+        <button class="btn btn-secondary" @onclick="CreateOrderAsync">Save</button>
+        <a class="btn btn-secondary" href="/order">Cancel</a>
+    </div>
+</div>
+
+<MatDialog IsOpen="isSelectProductModalShow">
+    <MatDialogTitle>Select product to add in order</MatDialogTitle>
+    <MatDialogContent>
+        @if (products == null)
+        {
+            <span>Please wait...</span>
+        }
+        else
+    if (products.Count == 0)
+        {
+            <span>List is empty</span>
+        }
+        else
+        {
+            <table class="table-bordered pb-5" width="100%">
+                <thead>
+                    <tr style="background-color:blue; color:white">                       
+                        <th class="text-center">Product Name</th>
+                        <th class="text-center">Product Category</th>
+                        <th class="text-center">Product Size</th>
+                        <th class="text-center">Quantity</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (products is null)
+                    {
+                        <tr>
+                            <td>Products are loading...</td>
+                        </tr>
+                    }
+                    else if (products.Count == 0)
+                    {
+                        <tr>
+                            <td>Table is empty</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in products)
+                        {
+                            <tr>
+                                <td class="text-center">@item.Name</td>
+                                <td class="text-center">@item.Category</td>
+                                <td class="text-center">@item.ProductSize</td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-center">$@item.Price.ToString("0.00")</td>
+                                <td class="text-center">
+                                    <a href="#"
+                                       @onclick:preventDefault
+                                       @onclick="()=>AddProductToOrder(item)">
+                                        Select this product
+                                    </a>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton @onclick="()=>isSelectProductModalShow = false">Cancel</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+
+<MatDialog IsOpen="isAddingProductModalShow">
+        <MatDialogTitle>
+            Add Product To Order
+        </MatDialogTitle>
+        <MatDialogContent>
+            @if (currentProductInOrder != null)
+            {
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div style="font-size:13px; font-weight:bold">Product number:</div>
+                    </div>
+                    <div class="col-8">
+                        <div style="font-size:13px; font-weight:bold">@currentProductInOrder.Product.ProductId</div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div style="font-size:13px; font-weight:bold">Product name:</div>
+                    </div>
+                    <div class="col-8">
+                        <div style="font-size:13px; font-weight:bold">@currentProductInOrder.Product.Name</div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div style="font-size:13px; font-weight:bold">Product category:</div>
+                    </div>
+                    <div class="col-8">
+                        <div style="font-size:13px; font-weight:bold">@currentProductInOrder.Product.Category</div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div style="font-size:13px; font-weight:bold">Quantity:</div>
+                    </div>
+                    <div class="col-8">
+                        <input type="number" max="@currentProductInOrder.Product.Quantity" @bind-value="currentProductInOrder.Quantity" />
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div style="font-size:13px; font-weight:bold">Product Size:</div>
+                    </div>
+                    <div class="col-8">                       
+                           <div style="font-size:13px; font-weight:bold">@currentProductInOrder.Product.ProductSize</div>                       
+                    </div>
+                </div>
+            }
+            </MatDialogContent>
+        <MatDialogActions>
+            <MatButton @onclick="SaveProductToOrder">Save</MatButton>
+            <MatButton @onclick="() => isAddingProductModalShow = false">Cancel</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+@code {
+
+    Order order = new Order();
+    private List<Customer> customers;
+    private List<Product> products;
+    private bool isSelectProductModalShow = false;
+    private bool isAddingProductModalShow = false;
+    ProductInOrder currentProductInOrder = null;
+    string errorMessage;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        order.DateOfOrder = DateTime.Now;
+        order.Status = OrderStatus.New;
+        order.ProductsInOrder = new List<ProductInOrder>();
+        customers = await _customerService.GetAllAsync();
+        products = await _productService.GetAllAsync();
+    }
+
+    private void SelectProduct()
+    {
+
+        isSelectProductModalShow = true;
+    }
+
+    private void AddProductToOrder(Product selectedProduct)
+    {
+        currentProductInOrder = new ProductInOrder();
+        currentProductInOrder.Product = selectedProduct;
+        currentProductInOrder.ProductPrice = selectedProduct.Price;
+        isSelectProductModalShow = false;
+        isAddingProductModalShow = true;
+    }
+
+    private OrderStatus[] GetOrderStatuses()
+    {
+        return Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>().ToArray();
+    }
+
+
+
+    private void SaveProductToOrder()
+    {
+        currentProductInOrder.Product.Quantity -= currentProductInOrder.Quantity;
+        order.ProductsInOrder.Add(currentProductInOrder);
+        order.TotalCost = order.ProductsInOrder.Sum(a => a.Quantity * a.ProductPrice);
+        isAddingProductModalShow = false;
+    }
+
+    public async Task CreateOrderAsync()
+    {
+        errorMessage = "";
+        if (await _orderService.CreateOrderAsync(order))
+            _navManager.NavigateTo("order");
+        else
+            errorMessage = "Order not created. Please try againe";
+    }
+}
