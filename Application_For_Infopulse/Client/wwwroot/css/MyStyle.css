@@ -50,3 +50,15 @@ TH {
     max-height: 490px;*/
     height:420px;
 }
+.smalltitle {
+    font-weight:bold; 
+    color:black;
+}
+.comment {
+    border: 3px solid #808080;
+    border-radius: 10px;
+}
+.generaltestfont {
+    font-size:13px;
+    font-weight:bold;
+}

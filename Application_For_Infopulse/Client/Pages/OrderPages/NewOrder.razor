@@ -16,7 +16,6 @@
 else
 {
     <div class="row">
-        <div class="col-1"></div>
         <div class="col-2">
             <span style="font-size:13px; font-weight:bold">Order Date:</span>
         </div>
@@ -57,7 +56,7 @@ else
 
 <div class="row mt-4 mb-3">
     <div class="col">
-        <h6 style="font-weight:bold; color:black"><em>Add Products:</em></h6>
+        <h6 class="smalltitle"><em>Add Products:</em></h6>
     </div>
     <div class="col text-right">
         <button class="btn btn-secondary" @onclick="SelectProduct">Add Products To Order</button>
@@ -68,24 +67,24 @@ else
     <table class="table-bordered pb-5" width="100%">
         <thead>
             <tr>
-                <th class="text-center" style="border-radius:3px">Product Id</th>
-                <th class="text-center" style="border-radius:3px">Product Name</th>
-                <th class="text-center" style="border-radius:3px">Product Catogory</th>
-                <th class="text-center" style="border-radius:3px">Produst Size</th>
-                <th class="text-center" style="border-radius:3px">Quantity</th>
-                <th class="text-center" style="border-radius:3px">Price</th>
+                <th class="text-center">Product Id</th>
+                <th class="text-center">Product Name</th>
+                <th class="text-center">Product Catogory</th>
+                <th class="text-center">Produst Size</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-center">Price</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var productInOrder in order.ProductsInOrder)
             {
                 <tr>
-                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.ProductId</td>
-                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.Name</td>
-                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.Category</td>
-                    <td class="text-center" style="border-radius:3px">@productInOrder.Product.ProductSize</td>
-                    <td class="text-center" style="border-radius:3px">@productInOrder.Quantity</td>
-                    <td class="text-center" style="border-radius:3px">@productInOrder.ProductPrice</td>
+                    <td class="text-center">@productInOrder.Product.ProductId</td>
+                    <td class="text-center">@productInOrder.Product.Name</td>
+                    <td class="text-center">@productInOrder.Product.Category</td>
+                    <td class="text-center">@productInOrder.Product.ProductSize</td>
+                    <td class="text-center">@productInOrder.Quantity</td>
+                    <td class="text-center">@productInOrder.ProductPrice</td>
                 </tr>
             }
         </tbody>
@@ -117,7 +116,7 @@ else
         {
             <table class="table-bordered pb-5" width="100%">
                 <thead>
-                    <tr style="background-color:blue; color:white">                       
+                    <tr>                       
                         <th class="text-center">Product Name</th>
                         <th class="text-center">Product Category</th>
                         <th class="text-center">Product Size</th>

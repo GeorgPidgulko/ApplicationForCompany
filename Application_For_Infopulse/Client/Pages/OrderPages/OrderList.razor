@@ -8,7 +8,7 @@
 
 <div class="row mt-4 mb-3">
     <div class="col">
-        <ActionTitle ActionString='@("Order")'/>
+        <ActionTitle ActionString='@("Orders")'/>
     </div>
     <div class="col text-right">
         <button class="btn btn-secondary" @onclick="GoToNewOrderPage">New Order</button>
@@ -16,7 +16,6 @@
 </div>
 <div class="secondborder">
     <table class="pb-5 table-bordered" width="100%">
-        @*table_block*@
         <thead>
             <tr>               
                 <th class="text-center">Order Number</th>
@@ -25,10 +24,9 @@
                 <th class="text-center">Total Cost</th>
                 <th class="text-center">Status</th>
             </tr>
-            @*style="background-color:blue; color:white"*@
         </thead>
         <tbody>
-            @if (orders is null)
+            @if (orders == null)
             {
                 <tr>
                     <td>Orders are loading...</td>
@@ -42,17 +40,19 @@
             }
             else
             {
-                @foreach (var item in orders)
+                @foreach (var itemOrder in orders)
                 {
-                    <tr>                        
-                        <td class="text-center"><a href="/order/editorder/@item.OrderId">@item.OrderId</a></td>
-                        <td class="text-center">@item.Customer.Name</td>
-                        <td class="text-center">@item.Customer.Address</td>
-                        <td class="text-center">@item.TotalCost</td>
-                        <td class="text-center">@item.Status</td>
+                    <tr @onmouseover="@(() => SelectedRow(itemOrder))"
+                        @onmouseout="@(() => UnselectedRow ())"
+                        style="cursor:pointer; @( selectedOrder == itemOrder ?"background-color:aquamarine" : "")"
+                        @onclick= "() => ChooseViewOrder(itemOrder)">
+                        <td class="text-center"><a href="/order/editorder/@itemOrder.OrderId">@itemOrder.OrderId</a></td>
+                        <td class="text-center"> @(@itemOrder.Customer==null ? "Customer": itemOrder.Customer.Name )</td>
+                        <td class="text-center">@(@itemOrder.Customer == null ? "Customer Address" : itemOrder.Customer.Address )</td>
+                        <td class="text-center">@itemOrder.TotalCost</td>
+                        <td class="text-center">@itemOrder.Status</td>
                     </tr>
-                    @*style = "border:1px solid black; border-radius:3px"*@
-                }
+        }
             }
 
 
@@ -60,32 +60,39 @@
     </table>
 </div>
 
-
+<p>@message</p>
 
     @code {
         private List<Order> orders;
+        Order selectedOrder;
 
-        //[Parameter]
-        //public RenderFragment ActionTitle { get; set; }
+        private string message;//temp
 
         protected override async Task OnInitializedAsync()
         {
 
             orders = await _orderService.GetAllAsync();
+            //selectedOrder = orders[0];
+        }
+
+        private void SelectedRow(Order order)
+        {
+            selectedOrder = order;
+        }
+
+        private void UnselectedRow()
+        {
+            selectedOrder = null;
+        }
+
+        private void ChooseViewOrder(Order order)
+        {
+            //message = "ChooseViewOrder " + order.OrderId.ToString();
+            navManager.NavigateTo($"/order/view/{order.OrderId}");
         }
 
         void GoToNewOrderPage()
         {
-            //int orderNumber;
-            //if (orders is null)
-            //{
-            //    orderNumber = 1;
-            //}
-            //else
-            //{
-            //    orderNumber = orders.Max(a => a.OrderNumber) + 1;
-            //}
-
-            navManager.NavigateTo($"order/neworder/");
+            navManager.NavigateTo($"/order/neworder/");
         }
     }

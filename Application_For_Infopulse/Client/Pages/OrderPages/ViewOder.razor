@@ -1,7 +1,129 @@
-﻿@page "/order/view"
+﻿@page "/order/view/{OrderId:long}"
+@inject OrderService _orderService
+@inject NavigationManager _navManager
 
-<h3>ViewOder</h3>
+<div class="row mt-4 mb-3">
+    <div class="col">
+        <ActionTitle ActionString='@("View Order")' />
+    </div>
+    <div class="col text-right">
+        <button class="btn btn-secondary" style="width:100px" @onclick="EditThisOrder">Edit</button>
+    </div>
+</div>
+
+
+@if (order is not null)
+{
+    <div class="row">
+        <div class="col-2 generaltestfont">
+            <span>Order Number:</span>
+        </div>
+        <div class="col-1 generaltestfont">
+            <div>@order.OrderId</div>
+        </div>
+        <div class="col-2 generaltestfont">
+            <span>Order Date:</span>
+        </div>
+        <div class="col-1 generaltestfont">
+            <div>@order.DateOfOrder.ToString("dd/MM/yyyy")</div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-2 generaltestfont">
+            <span>Customer:</span>
+        </div>
+        <div class="col-1 generaltestfont">
+            <div>@(order.Customer == null? "Customer is null": @order.Customer.Name)</div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-2 generaltestfont">
+            <span>Status:</span>
+        </div>
+        <div class="col-1 generaltestfont">
+            <div>@order.Status</div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-2 generaltestfont">
+            <span>Total Cost:</span>
+        </div>
+        <div class="col-1 generaltestfont">
+            <div>@TotalCost()</div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col">
+            <h6 class="smalltitle"><em>Order Producrs</em></h6>
+        </div>
+    </div>
+    <table class="table-bordered pb-5" width="100%">
+        <thead>
+            <tr>
+                <th class="text-center">Product Id</th>
+                <th class="text-center">Product Name</th>
+                <th class="text-center">Product Catogory</th>
+                <th class="text-center">Produst Size</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-center">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var productInOrder in order.ProductsInOrder)
+            {
+                <tr>
+                    <td class="text-center">@productInOrder.Product.ProductId</td>
+                    <td class="text-center">@productInOrder.Product.Name</td>
+                    <td class="text-center">@productInOrder.Product.Category</td>
+                    <td class="text-center">@productInOrder.Product.ProductSize</td>
+                    <td class="text-center">@productInOrder.Quantity</td>
+                    <td class="text-center">@productInOrder.ProductPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="row mt-4">
+        <div class="col-2 generaltestfont">
+            Comment:
+        </div>
+        <div class="col-9 comment" style="height:80px">
+
+        </div>
+    </div>
+
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <span style="color:red; font-size:24px">This order is empty</span>
+        </div>
+    </div>
+}
+
+
 
 @code {
+    [Parameter]
+    public long OrderId { get; set; }
+    Order order;
 
+    protected override async Task OnInitializedAsync()
+    {
+        order = await _orderService.GetAsync(OrderId);
+    }
+
+    private void EditThisOrder()
+    {
+        _navManager.NavigateTo($"/order/editorder/{order.OrderId}");
+    }
+    private decimal TotalCost()
+    {
+        decimal totalCost = 0;
+        foreach (var item in order.ProductsInOrder)
+        {
+            totalCost = totalCost + item.Quantity * item.ProductPrice;
+        }
+        return totalCost;
+    }
 }

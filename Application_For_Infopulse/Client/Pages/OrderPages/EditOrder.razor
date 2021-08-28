@@ -6,12 +6,12 @@
 
 
 
-<ActionTitle ActionString='@("New Order")' />
+<ActionTitle ActionString='@("Edit Order")' />
 @if (customers == null || order == null)
 {
-<div class="row">
-    Please wait. Loading...
-</div>
+    <div class="row">
+        Please wait. Loading...
+    </div>
 }
 else
 {
@@ -29,7 +29,7 @@ else
             <div style="font-size:13px; font-weight:bold">Customer:</div>
         </div>
         <div class="col-1">
-            <MatSelectItem @bind-Value="order.Customer" Items="@customers">
+            <MatSelectItem @bind-Value="@order.Customer" Items="@customers">
                 <ItemTemplate>
                     <span>@context?.Name</span>
                 </ItemTemplate>
@@ -68,24 +68,24 @@ else
     <table class="table-bordered pb-5" width="100%">
         <thead>
             <tr>
-                <th class="text-center" style="border-radius:3px">Product Id</th>
-                <th class="text-center" style="border-radius:3px">Product Name</th>
-                <th class="text-center" style="border-radius:3px">Product Catogory</th>
-                <th class="text-center" style="border-radius:3px">Produst Size</th>
-                <th class="text-center" style="border-radius:3px">Quantity</th>
-                <th class="text-center" style="border-radius:3px">Price</th>
+                <th class="text-center">Product Id</th>
+                <th class="text-center">Product Name</th>
+                <th class="text-center">Product Catogory</th>
+                <th class="text-center">Produst Size</th>
+                <th class="text-center">Quantity</th>
+                <th class="text-center">Price</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var productInOrder in order.ProductsInOrder)
             {
                 <tr>
-                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.ProductId</td>
-                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.Name</td>
-                    <td class="text-center" style="border-radius:10px">@productInOrder.Product.Category</td>
-                    <td class="text-center" style="border-radius:3px">@productInOrder.Product.ProductSize</td>
-                    <td class="text-center" style="border-radius:3px">@productInOrder.Quantity</td>
-                    <td class="text-center" style="border-radius:3px">@productInOrder.ProductPrice</td>
+                    <td class="text-center">@productInOrder.Product.ProductId</td>
+                    <td class="text-center">@productInOrder.Product.Name</td>
+                    <td class="text-center">@productInOrder.Product.Category</td>
+                    <td class="text-center">@productInOrder.Product.ProductSize</td>
+                    <td class="text-center">@productInOrder.Quantity</td>
+                    <td class="text-center">@productInOrder.ProductPrice</td>
                 </tr>
             }
         </tbody>

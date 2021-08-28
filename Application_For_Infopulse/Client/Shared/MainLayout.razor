@@ -12,23 +12,31 @@
                 <div class="col nav">
                     <div>
                         <NavLink class="nav-item" href="order">
-                            <button type="button" class="btn btn-outline-secondary btn-lg nav-item px-5">Orders</button>
+                            <button type="button" class="btn @(menuItem == 1 ? "btn-outline-secondary": "btn-secondary") btn-lg nav-item px-5"
+                                @onclick="()=> SelectedButton(1)"
+                                >Orders
+                            </button>
                         </NavLink>
                     </div>
                     <div class="ml-4">
-                        <NavLink class="nav-item active" href="product">
-                            <button type="button" class="btn btn-secondary btn-lg px-5">Products</button>
+                        <NavLink class="nav-item" href="product">
+                            <button type="button" class="btn @(menuItem == 2 ? "btn-outline-secondary": "btn-secondary")  btn-lg px-5"
+                                 @onclick="()=> SelectedButton(2)"
+                                >Products
+                            </button>
                         </NavLink>
                     </div>
                     <div class="ml-4">
                         <NavLink class="nav-item" href="customer">
-                            <button type="button" class="btn btn-secondary btn-lg px-5">Customers</button>
+                            <button type="button" class="btn @(menuItem == 3 ? "btn-outline-secondary": "btn-secondary")   btn-lg px-5"
+                                @onclick="()=> SelectedButton(3)"
+                                >Customers
+                            </button>
                         </NavLink>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="content">
             <div class="mainborder">
                 @Body
@@ -36,6 +44,18 @@
         </div>
     </div>
 </div>
+@code{
+    private int menuItem = 1;
 
+    private void SelectedButton(int i)
+    {
+        menuItem = i;
+    }
+
+    private void UnselectedButton()
+    {
+        menuItem = 0;
+    }
+}
 
 
